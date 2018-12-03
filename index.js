@@ -12,7 +12,7 @@ const getScript = modulePath => {
 }
 
 module.exports = {
-  require: (modulePath, functionName, {console, context} = {}) => {
+  require: (modulePath, {console, context} = {}) => {
     const vm = new NodeVM({
       sandbox: {
         console,
@@ -23,7 +23,6 @@ module.exports = {
         context: 'sandbox'
       }
     })
-    const requiredModule = vm.run(getScript(modulePath), modulePath)
-    return functionName ? requiredModule[functionName] : requiredModule
+    return vm.run(getScript(modulePath), modulePath)
   }
 }

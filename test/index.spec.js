@@ -17,35 +17,34 @@ describe('vrequire', () => {
   test('requiring a module exporting an object', () => {
     const randomValue = randomString.generate()
 
-    const fn = vrequire.require(modulePath('module-exporting-an-object.js'), 'func')
-
-    expect(fn(randomValue)).resolves.toEqual(randomValue)
+    const {func} = vrequire.require(modulePath('module-exporting-an-object.js'))
+    expect(func(randomValue)).resolves.toEqual(randomValue)
   })
 
   test('requiring a module exporting an object, passing alternative console implementation', () => {
     const randomValue = randomString.generate()
     const alternativeConsole = {log: jest.fn()}
 
-    const fn = vrequire.require(modulePath('module-with-console-call.js'), 'func', {console: alternativeConsole})
+    const {func} = vrequire.require(modulePath('module-with-console-call.js'), {console: alternativeConsole})
 
-    expect(fn(randomValue)).resolves.toEqual(randomValue)
+    expect(func(randomValue)).resolves.toEqual(randomValue)
     expect(alternativeConsole.log).toHaveBeenCalledWith(randomValue)
   })
 
   test('requiring a module exporting an object, passing context', () => {
     const aKey = randomString.generate()
     const aValue = randomString.generate()
-    const fn = vrequire.require(modulePath('module-with-context-use.js'), 'getContextKey', {context: {[aKey]: aValue}})
+    const {getContextKey} = vrequire.require(modulePath('module-with-context-use.js'), {context: {[aKey]: aValue}})
 
-    expect(fn(aKey)).resolves.toEqual(aValue)
+    expect(getContextKey(aKey)).resolves.toEqual(aValue)
   })
 
   test('a module requiring other modules', () => {
     const aKey = randomString.generate()
     const aValue = randomString.generate()
-    const fn = vrequire.require(modulePath('module-requiring-another.js'), 'getContextKeyNested', {context: {[aKey]: aValue}})
+    const {getContextKeyNested} = vrequire.require(modulePath('module-requiring-another.js'), {context: {[aKey]: aValue}})
 
-    expect(fn(aKey)).resolves.toEqual(aValue)
+    expect(getContextKeyNested(aKey)).resolves.toEqual(aValue)
   })
 
   describe('caching', () => {
