@@ -1,4 +1,4 @@
 
 module.exports = {
-  getContextKey: key => context[key]
+  getContextKey: key => Promise.resolve(context[key])
 }

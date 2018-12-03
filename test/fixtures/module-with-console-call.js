@@ -3,6 +3,6 @@ module.exports = {
   func: returnValue => {
     console.log(returnValue)
 
-    return returnValue
+    return Promise.resolve(returnValue)
   }
 }

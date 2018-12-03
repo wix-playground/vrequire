@@ -1,1 +1,1 @@
-module.exports = returnValue => returnValue
+module.exports = returnValue => Promise.resolve(returnValue)

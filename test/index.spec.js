@@ -11,7 +11,7 @@ describe('vrequire', () => {
 
     const fn = vrequire.require(modulePath('module-exporting-a-function.js'))
 
-    expect(fn(randomValue)).toEqual(randomValue)
+    expect(fn(randomValue)).resolves.toEqual(randomValue)
   })
 
   test('requiring a module exporting an object', () => {
@@ -19,7 +19,7 @@ describe('vrequire', () => {
 
     const fn = vrequire.require(modulePath('module-exporting-an-object.js'), 'func')
 
-    expect(fn(randomValue)).toEqual(randomValue)
+    expect(fn(randomValue)).resolves.toEqual(randomValue)
   })
 
   test('requiring a module exporting an object, passing alternative console implementation', () => {
@@ -28,7 +28,7 @@ describe('vrequire', () => {
 
     const fn = vrequire.require(modulePath('module-with-console-call.js'), 'func', {console: alternativeConsole})
 
-    expect(fn(randomValue)).toEqual(randomValue)
+    expect(fn(randomValue)).resolves.toEqual(randomValue)
     expect(alternativeConsole.log).toHaveBeenCalledWith(randomValue)
   })
 
@@ -37,14 +37,7 @@ describe('vrequire', () => {
     const aValue = randomString.generate()
     const fn = vrequire.require(modulePath('module-with-context-use.js'), 'getContextKey', {context: {[aKey]: aValue}})
 
-    expect(fn(aKey)).toEqual(aValue)
-  })
-
-  test('requiring a module exporting an async function', () => {
-    const aValue = randomString.generate()
-    const fn = vrequire.require(modulePath('module-with-async-function.js'), 'getPromise')
-
-    expect(fn(aValue)).resolves.toEqual(aValue)
+    expect(fn(aKey)).resolves.toEqual(aValue)
   })
 
   test('a module requiring other modules', () => {
@@ -52,12 +45,16 @@ describe('vrequire', () => {
     const aValue = randomString.generate()
     const fn = vrequire.require(modulePath('module-requiring-another.js'), 'getContextKeyNested', {context: {[aKey]: aValue}})
 
-    expect(fn(aKey)).toEqual(aValue)
+    expect(fn(aKey)).resolves.toEqual(aValue)
   })
 
   describe('caching', () => {
     afterAll(() => {
-      fs.unlink(modulePath('module-to-be-changed.js'))
+      try {
+        fs.unlinkSync(modulePath('module-to-be-changed.js'))
+      } catch (error) {
+
+      }
     })
 
     test('a module is compiled only once and cached', () => {

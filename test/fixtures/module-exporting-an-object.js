@@ -1,4 +1,4 @@
 
 module.exports = {
-  func: returnValue => returnValue
+  func: returnValue => Promise.resolve(returnValue)
 }
