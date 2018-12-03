@@ -47,24 +47,30 @@ describe('vrequire', () => {
     expect(fn(aValue)).resolves.toEqual(aValue)
   })
 
-  test('a module is compiled only once and cached', () => {
-    const aValue = randomString.generate()
-    const moduleToBeChangedPath = modulePath('module-to-be-changed.js')
-
-    fs.writeFileSync(moduleToBeChangedPath, 'module.exports = value => value')
-    const fn1 = vrequire.require(moduleToBeChangedPath)
-
-    fs.writeFileSync(moduleToBeChangedPath, 'module.exports = value => value.repeat(2)')
-    const fn2 = vrequire.require(moduleToBeChangedPath)
-
-    expect(fn1(aValue)).toEqual(fn2(aValue))
-  })
-
   test('a module requiring other modules', () => {
     const aKey = randomString.generate()
     const aValue = randomString.generate()
     const fn = vrequire.require(modulePath('module-requiring-another.js'), 'getContextKeyNested', {context: {[aKey]: aValue}})
 
     expect(fn(aKey)).toEqual(aValue)
+  })
+
+  describe('caching', () => {
+    afterAll(() => {
+      fs.unlink(modulePath('module-to-be-changed.js'))
+    })
+
+    test('a module is compiled only once and cached', () => {
+      const aValue = randomString.generate()
+      const moduleToBeChangedPath = modulePath('module-to-be-changed.js')
+
+      fs.writeFileSync(moduleToBeChangedPath, 'module.exports = value => value')
+      const fn1 = vrequire.require(moduleToBeChangedPath)
+
+      fs.writeFileSync(moduleToBeChangedPath, 'module.exports = value => value.repeat(2)')
+      const fn2 = vrequire.require(moduleToBeChangedPath)
+
+      expect(fn1(aValue)).toEqual(fn2(aValue))
+    })
   })
 })
