@@ -1,6 +1,4 @@
 
 module.exports = {
-  getContextKey: key => {
-    return context[key]
-  }
+  getContextKey: key => context[key]
 }
