@@ -21,6 +21,15 @@ describe('vrequire', () => {
     expect(func(randomValue)).resolves.toEqual(randomValue)
   })
 
+  test('requiring a module from node_modules is allowed only for whitelisted modules', () => {
+    const moduleToLoad = modulePath('module-requiring-a-nonwhitelisted-node-module.js')
+
+    expect (() => vrequire.require(moduleToLoad, {whitelistedNodeModules: ['test-module-2']})).not.toThrow()
+
+    expect (() => vrequire.require(moduleToLoad, {whitelistedNodeModules: []}))
+      .toThrow(/Cannot find module 'test-module-2' from '\S*module-requiring-a-nonwhitelisted-node-module.js'/)
+  })
+
   test('requiring a module exporting an object, passing alternative console implementation', () => {
     const randomValue = randomString.generate()
     const alternativeConsole = {log: jest.fn()}
